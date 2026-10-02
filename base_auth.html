@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>{% block title %}Dream Space{% endblock %}</title>{% include "_head.html" %}</head>
+<body class="auth-body">{% include "_decor.html" %}
+<main class="auth-wrap">
+  <div class="auth-card fade-in">
+    <h1 class="script brand-lg">Dream Space</h1>
+    <p class="muted center">Your little space to breathe, reflect and grow.</p>
+    {% include "_messages.html" %}
+    {% block content %}{% endblock %}
+  </div>
+</main>
+{% load static %}<script src="{% static 'js/app.js' %}"></script>
+</body></html>

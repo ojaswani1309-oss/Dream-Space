@@ -1,0 +1,55 @@
+{% extends "base.html" %}{% block title %}Mood Tracker · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="script">Mood Tracker</h1><p>Notice how you feel, gently, one day at a time.</p></div>
+
+<div class="grid-2">
+  <section class="card" id="log">
+    <h3>{% if today_mood %}Add another mood{% else %}How are you feeling today?{% endif %}</h3>
+    <form method="post" class="stack">{% csrf_token %}
+      <div class="mood-grid">
+        {% for key, emoji, label, score in moods %}
+        <label class="mood-opt"><input type="radio" name="mood" value="{{ key }}" required><span><em>{{ emoji }}</em>{{ label }}</span></label>
+        {% endfor %}
+      </div>
+      <label>Reason<input class="input" name="reason" maxlength="255" placeholder="Had a really good day with my friends."></label>
+      <label>Short description<textarea class="input" name="description" rows="2"></textarea></label>
+      <div class="grid-2 tight">
+        <label>Date<input class="input" type="date" name="date" value="{{ today|date:'Y-m-d' }}" required></label>
+        <label>Optional note<input class="input" name="note"></label>
+      </div>
+      <button class="btn">Save mood</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h3>Today</h3>
+    {% if today_mood %}<div class="big-emoji">{{ today_mood.emoji }}</div><p><strong>{{ today_mood.label }}</strong>{% if today_mood.reason %}<br><span class="muted">{{ today_mood.reason }}</span>{% endif %}</p>
+    {% else %}{% include "_empty.html" with icon="🫧" text="How are you feeling today?" %}{% endif %}
+    <h3>Statistics</h3>
+    {% if most %}<p>Most frequent mood: <strong>{{ most.0.emoji }} {{ most.0.label }}</strong> <span class="muted">({{ most.1 }}×)</span> · {{ total }} entr{{ total|pluralize:"y,ies" }} in total</p>{% else %}<p class="muted">Statistics will appear after your first entry.</p>{% endif %}
+    <h4>This week</h4>
+    <div class="week">{% for d in week %}<div><span>{{ d.day }}</span><b>{% if d.mood %}{{ d.mood.emoji }}{% else %}·{% endif %}</b></div>{% endfor %}</div>
+    <h4>Last 30 days</h4>
+    {% for m in monthly %}<div class="bar-row"><span>{{ m.emoji }} {{ m.label }}</span><div class="progress thin"><span data-progress="{{ m.pct }}"></span></div><b>{{ m.count }}</b></div>
+    {% empty %}<p class="muted">No moods in the last 30 days.</p>{% endfor %}
+  </section>
+</div>
+
+<section class="card">
+  <div class="row between"><h3>Mood calendar</h3>
+    <div class="row"><a class="icon-btn" href="{{ nav.prev }}" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></a><strong>{{ nav.label }}</strong><a class="icon-btn" href="{{ nav.next }}" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></a></div></div>
+  <div class="cal"><div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
+    {% for w in weeks %}{% for c in w %}<div class="cal-day {% if not c.in %}out{% endif %} {% if c.today %}today{% endif %}"><span class="num">{{ c.d.day }}</span>{% if c.mood %}<span class="cal-emoji" title="{{ c.mood.label }}">{{ c.mood.emoji }}</span>{% endif %}</div>{% endfor %}{% endfor %}
+  </div>
+</section>
+
+<section class="card">
+  <h3>History</h3>
+  {% for m in history %}
+  <div class="list-item"><div class="li-emoji">{{ m.emoji }}</div>
+    <div class="grow"><strong>{{ m.label }}</strong> <small class="muted">{{ m.date|date:"D, M j, Y" }}</small>
+      {% if m.reason %}<p>{{ m.reason }}</p>{% endif %}{% if m.description %}<p class="muted">{{ m.description }}</p>{% endif %}{% if m.note %}<p class="muted"><i>{{ m.note }}</i></p>{% endif %}</div>
+    <form method="post" action="{% url 'mood_delete' m.pk %}" data-confirm="Delete this mood entry?">{% csrf_token %}<button class="icon-btn danger" title="Delete"><i class="fa-regular fa-trash-can"></i></button></form></div>
+  {% empty %}{% include "_empty.html" with icon="💙" text="No mood recorded yet. How are you feeling today?" %}{% endfor %}
+</section>
+{% endblock %}

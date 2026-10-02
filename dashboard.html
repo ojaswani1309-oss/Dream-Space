@@ -1,0 +1,65 @@
+{% extends "base.html" %}{% block title %}Dashboard · Dream Space{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1 class="script">Welcome back, {{ user.first_name|default:user.username }} ✨</h1>
+  <p>Your little space to breathe, reflect and grow.</p>
+</section>
+
+<section class="quick">
+  <a class="btn" href="{% url 'mood' %}#log"><i class="fa-regular fa-face-smile"></i> Track Mood</a>
+  <a class="btn" href="{% url 'journal_add' %}"><i class="fa-solid fa-pen-nib"></i> Write Journal</a>
+  <a class="btn" href="{% url 'routine_add' %}"><i class="fa-solid fa-plus"></i> Add Task</a>
+  <a class="btn" href="{% url 'notes_add' %}"><i class="fa-regular fa-note-sticky"></i> Add Note</a>
+  <a class="btn" href="{% url 'calendar_add' %}"><i class="fa-regular fa-calendar-plus"></i> Add Event</a>
+</section>
+
+<div class="grid">
+  <article class="card">
+    <h3>Mood</h3>
+    {% if today_mood %}<div class="big-emoji">{{ today_mood.emoji }}</div><p><strong>Today: {{ today_mood.label }}</strong></p>
+    {% else %}<p class="muted">How are you feeling today?</p><a class="btn btn-soft" href="{% url 'mood' %}#log">Log your mood</a>{% endif %}
+    {% if recent_mood %}<p class="muted">Most recent: {{ recent_mood.emoji }} {{ recent_mood.label }} · {{ recent_mood.date|date:"M j" }}</p>{% endif %}
+    <p class="chip">{{ trend.1 }} {{ trend.0 }}</p>
+  </article>
+
+  <article class="card">
+    <h3>Journal</h3>
+    <div class="stat">{{ journal_count }}<small>{{ journal_count|pluralize:"entry,entries" }}</small></div>
+    {% if latest_journal %}<p class="muted clamp">Latest: <strong>{{ latest_journal.title }}</strong> · {{ latest_journal.date|date:"M j" }}</p>
+    {% else %}<p class="muted">Your pages are waiting for your thoughts ✨</p>{% endif %}
+    <a class="btn btn-soft" href="{% url 'journal_add' %}">Write Today</a>
+  </article>
+
+  <article class="card">
+    <h3>Routine</h3>
+    <div class="progress"><span data-progress="{{ task_pct }}"></span></div>
+    <p class="muted">{{ task_pct }}% of today's tasks done</p>
+    <div class="trio"><div><b>{{ task_total }}</b>Today</div><div><b>{{ task_done }}</b>Done</div><div><b>{{ task_pending }}</b>Pending</div></div>
+    {% if not task_total %}<p class="muted">Your day is clear. Enjoy the little things 🌿</p>{% endif %}
+  </article>
+
+  <article class="card">
+    <h3>Wellness</h3>
+    <p>💧 Water <strong>{{ glasses }} / {{ water_goal }}</strong></p>
+    <div class="progress"><span data-progress="{{ water_pct }}"></span></div>
+    <p>🌙 Sleep: {% if sleep %}<strong>{{ sleep.duration_text }}</strong> <span class="muted">({{ sleep.date|date:"M j" }})</span>{% else %}<span class="muted">not logged yet</span>{% endif %}</p>
+    <p>🌸 Daily wellness <strong>{{ wellness_done }} / {{ wellness_total }}</strong></p>
+    <div class="progress"><span data-progress="{{ wellness_pct }}"></span></div>
+  </article>
+
+  <article class="card">
+    <h3>Goals</h3>
+    <div class="stat">{{ goal_count }}<small>active</small></div>
+    {% for g in goals %}<div class="mini"><span>{{ g.title }}</span><b>{{ g.progress }}%</b></div><div class="progress thin"><span data-progress="{{ g.progress }}"></span></div>
+    {% empty %}<p class="muted">Dream a little. What would you like to grow?</p>{% endfor %}
+    <a class="btn btn-soft" href="{% url 'goals' %}">View goals</a>
+  </article>
+
+  <article class="card">
+    <h3>Coming up</h3>
+    {% for r in reminders %}<div class="mini"><span>⏰ {{ r.title }}</span><small>{{ r.date|date:"M j" }} · {{ r.time|time:"g:i A" }}</small></div>{% endfor %}
+    {% for e in events %}<div class="mini"><span>{% if e.is_important %}⭐{% else %}📅{% endif %} {{ e.title }}</span><small>{{ e.date|date:"M j" }}</small></div>{% endfor %}
+    {% if not reminders and not events %}<p class="muted">Nothing planned. Plenty of room to breathe.</p>{% endif %}
+  </article>
+</div>
+{% endblock %}

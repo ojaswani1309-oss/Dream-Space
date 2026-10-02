@@ -1,0 +1,10 @@
+{% extends "base_auth.html" %}{% block title %}Sign up · Dream Space{% endblock %}
+{% block content %}
+<form method="post" class="stack" novalidate>{% csrf_token %}
+  {% for f in form %}
+  <label>{{ f.label }}{{ f }}{% for e in f.errors %}<small class="err">{{ e }}</small>{% endfor %}</label>
+  {% endfor %}
+  <button class="btn block">Create my space</button>
+</form>
+<p class="center muted">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+{% endblock %}

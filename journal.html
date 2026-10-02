@@ -1,0 +1,36 @@
+{% extends "base.html" %}{% block title %}Journal · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="script">Pour your heart onto these pages.</h1><p>Private, just for you.</p></div>
+<div class="row between wrap">
+  <form class="row wrap search" method="get">
+    <input class="input" type="search" name="q" value="{{ q }}" placeholder="Search title, words or tags…">
+    <select class="input" name="mood" onchange="this.form.submit()"><option value="">All moods</option>
+      {% for k, e, l, s in moods %}<option value="{{ k }}" {% if mood_filter == k %}selected{% endif %}>{{ e }} {{ l }}</option>{% endfor %}</select>
+    <button class="btn btn-soft">Search</button>
+  </form>
+  <a class="btn" href="{% url 'journal_add' %}"><i class="fa-solid fa-pen-nib"></i> New entry</a>
+</div>
+
+<div class="grid">
+{% for e in entries %}
+  <article class="card entry" data-modal="tpl-{{ e.pk }}" tabindex="0" role="button">
+    <div class="row between"><small class="muted">{{ e.date|date:"M j, Y" }}</small><span class="big-emoji sm">{{ e.emoji }}</span></div>
+    <h3>{{ e.title }}</h3>
+    <p class="muted clamp3">{{ e.content|truncatewords:28 }}</p>
+    <div>{% for t in e.tag_list %}<span class="chip">#{{ t }}</span>{% endfor %}</div>
+  </article>
+  <template id="tpl-{{ e.pk }}">
+    <small class="muted">{{ e.date|date:"l, F j, Y" }}{% if e.mood %} · {{ e.emoji }} {{ e.label }}{% endif %}</small>
+    <h2 class="script big">{{ e.title }}</h2>
+    <div class="prose">{{ e.content|linebreaks }}</div>
+    <div>{% for t in e.tag_list %}<span class="chip">#{{ t }}</span>{% endfor %}</div>
+    <div class="row">
+      <a class="btn" href="{% url 'journal_edit' e.pk %}"><i class="fa-solid fa-pen"></i> Edit</a>
+      <form method="post" action="{% url 'journal_delete' e.pk %}" data-confirm="Delete this journal entry?">{% csrf_token %}<button class="btn btn-danger"><i class="fa-regular fa-trash-can"></i> Delete</button></form>
+    </div>
+  </template>
+{% empty %}
+  <div class="span-all">{% if q or mood_filter %}{% include "_empty.html" with icon="🔍" text="No entries match your search." %}{% else %}{% include "_empty.html" with icon="📖" text="Your pages are waiting for your thoughts ✨" url="journal_add" btn="Write your first entry" %}{% endif %}</div>
+{% endfor %}
+</div>
+{% endblock %}

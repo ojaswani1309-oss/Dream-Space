@@ -1,0 +1,45 @@
+{% extends "base.html" %}{% block title %}Wellness · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="script">Wellness</h1><p>Water, rest and the little things that hold you up.</p></div>
+<div class="grid-2">
+  <section class="card">
+    <h3>Water Today</h3>
+    <div class="stat">{{ glasses }} / {{ goal }}<small>glasses</small></div>
+    <div class="glasses">{% for i in glass_icons %}<span class="glass {% if forloop.counter0 < glasses %}full{% endif %}">💧</span>{% endfor %}</div>
+    <div class="progress"><span data-progress="{{ water_pct }}"></span></div>
+    <div class="row">
+      <form method="post" action="{% url 'wellness_water' %}">{% csrf_token %}<input type="hidden" name="action" value="add"><button class="btn"><i class="fa-solid fa-plus"></i> Add glass</button></form>
+      <form method="post" action="{% url 'wellness_water' %}">{% csrf_token %}<input type="hidden" name="action" value="remove"><button class="btn btn-soft"><i class="fa-solid fa-minus"></i> Remove glass</button></form>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Daily wellness <small class="muted">{{ act_done }} / {{ activities|length }}</small></h3>
+    <div class="progress"><span data-progress="{{ act_pct }}"></span></div>
+    <div class="acts">
+      {% for a in activities %}
+      <form method="post" action="{% url 'wellness_toggle' a.key %}">{% csrf_token %}<button class="act {% if a.done %}done{% endif %}"><span>{{ a.emoji }}</span>{{ a.label }}{% if a.done %} <i class="fa-solid fa-check"></i>{% endif %}</button></form>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h3>Log your sleep</h3>
+    <form method="post" class="stack">{% csrf_token %}
+      {% for f in sleep_form %}<label>{{ f.label }}{{ f }}</label>{% endfor %}
+      <button class="btn">Save sleep</button>
+    </form>
+  </section>
+  <section class="card">
+    <h3>Recent sleep {% if sleep_avg %}<small class="muted">avg {{ sleep_avg }} h</small>{% endif %}</h3>
+    {% if sleep_bars %}<div class="vbars">{% for b in sleep_bars %}<div><div class="vbar"><span style="height:{{ b.pct }}%"></span></div><b>{{ b.h|floatformat:1 }}</b><small>{{ b.day }}</small></div>{% endfor %}</div>{% endif %}
+    {% for s in sleeps %}
+    <div class="list-item"><div class="li-emoji">🌙</div><div class="grow"><strong>{{ s.duration_text }}</strong> <span class="chip">{{ s.get_quality_display }}</span>
+      <p class="muted">{{ s.date|date:"D, M j" }} · {{ s.sleep_time|time:"g:i A" }} → {{ s.wake_time|time:"g:i A" }}</p></div>
+      <form method="post" action="{% url 'wellness_sleep_delete' s.pk %}" data-confirm="Delete this sleep record?">{% csrf_token %}<button class="icon-btn danger" title="Delete"><i class="fa-regular fa-trash-can"></i></button></form></div>
+    {% empty %}{% include "_empty.html" with icon="🌙" text="No sleep logged yet. Rest well tonight." %}{% endfor %}
+  </section>
+</div>
+{% endblock %}

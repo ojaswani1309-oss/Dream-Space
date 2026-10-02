@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}{{ title }} · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="script">{{ title }}</h1></div>
+<form method="post" class="card form-card stack" novalidate>{% csrf_token %}
+  {% for f in form %}
+    {% if f.field.widget.input_type == 'checkbox' %}
+      <label class="inline">{{ f }} {{ f.label }}</label>
+    {% else %}
+      <label>{{ f.label }}{{ f }}{% if f.help_text %}<small class="muted">{{ f.help_text }}</small>{% endif %}</label>
+    {% endif %}
+    {% for e in f.errors %}<small class="err">{{ e }}</small>{% endfor %}
+  {% endfor %}
+  <div class="row"><button class="btn">Save</button><a class="btn btn-soft" href="{% url back %}">Cancel</a></div>
+</form>
+{% endblock %}

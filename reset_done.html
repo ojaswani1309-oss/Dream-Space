@@ -1,0 +1,4 @@
+{% extends "base_auth.html" %}
+{% block content %}<div class="empty"><div class="empty-icon">💌</div><h2>Check your inbox</h2>
+<p class="muted">If an account exists for that email, a reset link is on its way. (In development, the email is printed in the terminal running the server.)</p>
+<a class="btn" href="{% url 'login' %}">Back to log in</a></div>{% endblock %}

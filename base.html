@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en"><head><title>{% block title %}Dream Space{% endblock %}</title>{% include "_head.html" %}</head>
+<body>{% include "_decor.html" %}
+{% with n=request.resolver_match.url_name|default:"" %}
+<header class="topbar"><button class="menu-btn" aria-label="Open menu" id="menuBtn"><i class="fa-solid fa-bars"></i></button><span class="script brand">Dream Space</span></header>
+<div class="overlay" id="overlay"></div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard' %}" class="script brand brand-side">Dream Space</a>
+    <nav>
+      <a href="{% url 'dashboard' %}" class="{% if n == 'dashboard' %}active{% endif %}"><i class="fa-solid fa-house"></i>Dashboard</a>
+      <a href="{% url 'mood' %}" class="{% if 'mood' in n %}active{% endif %}"><i class="fa-regular fa-face-smile"></i>Mood Tracker</a>
+      <a href="{% url 'journal' %}" class="{% if 'journal' in n %}active{% endif %}"><i class="fa-solid fa-book-open"></i>Journal</a>
+      <a href="{% url 'music' %}" class="{% if 'music' in n %}active{% endif %}"><i class="fa-solid fa-music"></i>Music</a>
+      <a href="{% url 'calendar' %}" class="{% if 'calendar' in n %}active{% endif %}"><i class="fa-regular fa-calendar-days"></i>Calendar</a>
+      <a href="{% url 'routine' %}" class="{% if 'routine' in n %}active{% endif %}"><i class="fa-solid fa-list-check"></i>Routine</a>
+      <a href="{% url 'wellness' %}" class="{% if 'wellness' in n %}active{% endif %}"><i class="fa-solid fa-heart-pulse"></i>Wellness</a>
+      <a href="{% url 'goals' %}" class="{% if 'goals' in n %}active{% endif %}"><i class="fa-solid fa-bullseye"></i>Goals</a>
+      <a href="{% url 'notes' %}" class="{% if 'notes' in n %}active{% endif %}"><i class="fa-regular fa-note-sticky"></i>Notes</a>
+      <a href="{% url 'settings' %}" class="{% if 'settings' in n %}active{% endif %}"><i class="fa-solid fa-gear"></i>Settings</a>
+    </nav>
+    <form method="post" action="{% url 'logout' %}" class="logout">{% csrf_token %}
+      <button class="nav-btn"><i class="fa-solid fa-right-from-bracket"></i>Logout</button></form>
+  </aside>
+  <main class="main fade-in">
+    {% include "_messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endwith %}
+<div class="modal" id="modal" aria-hidden="true"><div class="modal-card" role="dialog" aria-modal="true">
+  <button class="modal-x" aria-label="Close" id="modalX">&times;</button><div id="modalBody"></div></div></div>
+{{ browser_reminders|json_script:"reminder-data" }}
+<script src="{% static 'js/app.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body></html>

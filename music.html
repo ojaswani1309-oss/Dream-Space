@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% block title %}Music · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="script">Music for your mood</h1>
+  <p>{% if today_mood %}Feeling {{ today_mood.emoji }} {{ today_mood.label|lower }} today? Try the <strong>{{ recommended|title }}</strong> mix.{% else %}Pick a vibe. Songs open on YouTube or Spotify.{% endif %}</p></div>
+
+<div class="chips">
+  {% for key, label, emoji, color in categories %}<a class="pill {% if key == cat %}active{% endif %}" href="?cat={{ key }}">{{ emoji }} {{ label }}{% if key == recommended %} <i class="fa-solid fa-star" title="Suggested for today's mood"></i>{% endif %}</a>{% endfor %}
+</div>
+
+<section class="player" id="player" hidden>
+  <div class="eq"><i></i><i></i><i></i><i></i></div>
+  <div class="grow"><b id="npTitle">—</b><br><small id="npArtist"></small></div>
+  <a class="btn" id="npLink" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i> Open</a>
+  <button class="icon-btn" id="npClose" aria-label="Close player">&times;</button>
+</section>
+
+<h3>{{ cat_label }}</h3>
+<div class="grid">
+  {% for s in songs %}
+  <article class="card music-card" style="--tint:{{ s.color }}">
+    <div class="cover">{{ s.emoji }}</div>
+    <h4>{{ s.title }}</h4><p class="muted">{{ s.artist }}</p>
+    <div class="row">
+      <button class="btn play" data-title="{{ s.title }}" data-artist="{{ s.artist }}" data-url="{{ s.url }}"><i class="fa-solid fa-play"></i> Play</button>
+      <a class="btn btn-soft" href="{{ s.spotify }}" target="_blank" rel="noopener noreferrer" title="Find on Spotify"><i class="fa-brands fa-spotify"></i></a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block title %}Settings · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="script">Settings</h1><p>Make this space yours.</p></div>
+<div class="grid-2">
+  <section class="card"><h3>Profile</h3>
+    <form method="post" class="stack">{% csrf_token %}<input type="hidden" name="action" value="profile">
+      {% for f in pf %}<label>{{ f.label }}{{ f }}{% for e in f.errors %}<small class="err">{{ e }}</small>{% endfor %}</label>{% endfor %}
+      <button class="btn">Save profile</button></form></section>
+  <section class="card"><h3>Change password</h3>
+    <form method="post" class="stack">{% csrf_token %}<input type="hidden" name="action" value="password">
+      {% for f in pw %}<label>{{ f.label }}{{ f }}{% for e in f.errors %}<small class="err">{{ e }}</small>{% endfor %}</label>{% endfor %}
+      <button class="btn">Update password</button></form></section>
+  <section class="card"><h3>Preferences</h3>
+    <form method="post" class="stack">{% csrf_token %}<input type="hidden" name="action" value="prefs">
+      {% for f in pr %}{% if f.field.widget.input_type == 'checkbox' %}<label class="inline">{{ f }} {{ f.label }}</label>{% else %}<label>{{ f.label }}{{ f }}</label>{% endif %}{% endfor %}
+      <button type="button" class="btn btn-soft" id="enableNotif">Allow browser notifications</button>
+      <button class="btn">Save preferences</button></form></section>
+  <section class="card"><h3>Account</h3>
+    <p class="muted">Signed in as <strong>{{ user.username }}</strong>.</p>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-soft"><i class="fa-solid fa-right-from-bracket"></i> Log out</button></form>
+    <hr><h4>Delete account</h4>
+    <p class="muted">This permanently deletes your account and every mood, journal entry, task, event, note and goal.</p>
+    <form method="post" class="stack" data-confirm="This cannot be undone. Delete your account and all your data?">{% csrf_token %}<input type="hidden" name="action" value="delete">
+      <label>Confirm with your password<input class="input" type="password" name="password" required></label>
+      <button class="btn btn-danger">Delete my account</button></form></section>
+</div>
+{% endblock %}

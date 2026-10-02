@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Notes · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head row between wrap"><div><h1 class="script">Private notes</h1><p>Keep your little thoughts here.</p></div><a class="btn" href="{% url 'notes_add' %}"><i class="fa-solid fa-plus"></i> New note</a></div>
+<form class="row wrap search" method="get"><input class="input" type="search" name="q" value="{{ q }}" placeholder="Search notes…">
+  <select class="input" name="cat" onchange="this.form.submit()"><option value="">All categories</option>{% for k, l in categories %}<option value="{{ k }}" {% if cat == k %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <button class="btn btn-soft">Search</button></form>
+<div class="grid">
+{% for n in notes %}
+  <article class="card note">
+    <div class="row between"><h4 class="nomargin">{{ n.title }}</h4>{% if n.category %}<span class="chip">{{ n.get_category_display }}</span>{% endif %}</div>
+    <p class="clamp5">{{ n.content }}</p><small class="muted">{{ n.updated_at|date:"M j, Y" }}</small>
+    <div class="row"><a class="icon-btn" href="{% url 'notes_edit' n.pk %}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+      <form method="post" action="{% url 'notes_delete' n.pk %}" data-confirm="Delete this note?">{% csrf_token %}<button class="icon-btn danger" title="Delete"><i class="fa-regular fa-trash-can"></i></button></form></div>
+  </article>
+{% empty %}<div class="span-all">{% if q or cat %}{% include "_empty.html" with icon="🔍" text="No notes match your search." %}{% else %}{% include "_empty.html" with icon="📝" text="Keep your little thoughts here." url="notes_add" btn="Write a note" %}{% endif %}</div>{% endfor %}
+</div>
+{% endblock %}

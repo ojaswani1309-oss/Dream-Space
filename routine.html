@@ -1,0 +1,46 @@
+{% extends "base.html" %}{% block title %}Routine · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head row between wrap"><div><h1 class="script">Daily routine</h1><p>Small steps, gently ticked off.</p></div>
+  <div class="row"><a class="btn btn-soft" href="{% url 'routine_reminder_add' %}"><i class="fa-regular fa-bell"></i> Reminder</a><a class="btn" href="{% url 'routine_add' %}?date={{ day|date:'Y-m-d' }}"><i class="fa-solid fa-plus"></i> Add task</a></div></div>
+
+<section class="card">
+  <div class="row between wrap"><div class="row"><a class="icon-btn" href="?date={{ prev|date:'Y-m-d' }}" aria-label="Previous day"><i class="fa-solid fa-chevron-left"></i></a>
+    <h3 class="nomargin">{% if is_today %}Today · {% endif %}{{ day|date:"l, F j" }}</h3><a class="icon-btn" href="?date={{ next|date:'Y-m-d' }}" aria-label="Next day"><i class="fa-solid fa-chevron-right"></i></a></div>
+    <form method="get" class="row"><input type="hidden" name="date" value="{{ day|date:'Y-m-d' }}">
+      <select class="input" name="cat" onchange="this.form.submit()"><option value="">All categories</option>{% for k, l in categories %}<option value="{{ k }}" {% if cat == k %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></form></div>
+  <p class="muted nomargin-b">Today's progress · {{ done }} of {{ total }} done</p>
+  <div class="progress big"><span data-progress="{{ progress }}"></span></div><p class="right"><b>{{ progress }}%</b></p>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h3>Tasks</h3>
+    {% for t in tasks %}
+    <div class="list-item task {% if t.completed %}done{% endif %}">
+      <form method="post" action="{% url 'routine_toggle' t.pk %}">{% csrf_token %}<button class="check-btn" aria-label="{% if t.completed %}Mark incomplete{% else %}Mark complete{% endif %}">{% if t.completed %}<i class="fa-solid fa-circle-check"></i>{% else %}<i class="fa-regular fa-circle"></i>{% endif %}</button></form>
+      <div class="grow"><strong>{{ t.title }}</strong> <span class="chip pr-{{ t.priority }}">{{ t.get_priority_display }}</span> <span class="chip">{{ t.get_category_display }}</span>
+        <p class="muted">{% if t.time %}{{ t.time|time:"g:i A" }}{% else %}Anytime{% endif %}{% if t.description %} · {{ t.description|truncatechars:60 }}{% endif %}</p></div>
+      <a class="icon-btn" href="{% url 'routine_edit' t.pk %}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+      <form method="post" action="{% url 'routine_delete' t.pk %}" data-confirm="Delete this task?">{% csrf_token %}<button class="icon-btn danger" title="Delete"><i class="fa-regular fa-trash-can"></i></button></form>
+    </div>
+    {% empty %}{% include "_empty.html" with icon="🌿" text="Your day is clear. Enjoy the little things 🌿" url="routine_add" btn="Add a task" %}{% endfor %}
+  </section>
+
+  <section class="card">
+    <h3>Timetable</h3>
+    {% for h in timetable %}<div class="slot"><span class="hour">{{ h.hour }}</span><div class="slot-items">{% for t in h.tasks %}<div class="slot-task {% if t.completed %}done{% endif %}">{{ t.time|time:"H:i" }} · {{ t.title }}</div>{% endfor %}</div></div>
+    {% empty %}<p class="muted">Tasks with a time appear here.</p>{% endfor %}
+    {% if anytime %}<div class="slot"><span class="hour">Anytime</span><div class="slot-items">{% for t in anytime %}<div class="slot-task {% if t.completed %}done{% endif %}">{{ t.title }}</div>{% endfor %}</div></div>{% endif %}
+  </section>
+</div>
+
+<section class="card">
+  <h3>Upcoming reminders</h3>
+  {% for r in reminders %}
+  <div class="list-item"><div class="li-emoji">⏰</div><div class="grow"><strong>{{ r.title }}</strong><p class="muted">{{ r.date|date:"D, M j" }} · {{ r.time|time:"g:i A" }}{% if r.task %} · {{ r.task.title }}{% endif %}</p></div>
+    <form method="post" action="{% url 'routine_reminder_done' r.pk %}">{% csrf_token %}<button class="icon-btn" title="Mark done"><i class="fa-solid fa-check"></i></button></form>
+    <a class="icon-btn" href="{% url 'routine_reminder_edit' r.pk %}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+    <form method="post" action="{% url 'routine_reminder_delete' r.pk %}" data-confirm="Delete this reminder?">{% csrf_token %}<button class="icon-btn danger" title="Delete"><i class="fa-regular fa-trash-can"></i></button></form></div>
+  {% empty %}<p class="muted">No reminders set.</p>{% endfor %}
+</section>
+{% endblock %}

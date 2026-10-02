@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Goals · Dream Space{% endblock %}
+{% block content %}
+<div class="page-head row between wrap"><div><h1 class="script">Goals</h1><p>Big dreams, tiny steps.</p></div><a class="btn" href="{% url 'goals_add' %}"><i class="fa-solid fa-plus"></i> New goal</a></div>
+<h3>Active</h3>
+<div class="grid">
+{% for g in active %}
+  <article class="card">
+    <div class="row between"><h4 class="nomargin">{{ g.title }}</h4><span class="chip">{{ g.get_status_display }}</span></div>
+    {% if g.description %}<p class="muted">{{ g.description }}</p>{% endif %}
+    <p class="muted"><small>{{ g.start_date|date:"M j" }}{% if g.target_date %} → {{ g.target_date|date:"M j, Y" }}{% endif %}</small></p>
+    <div class="progress"><span data-progress="{{ g.progress }}"></span></div>
+    <form method="post" action="{% url 'goals_progress' g.pk %}" class="row"><span class="pct-label"><b>{{ g.progress }}</b>%</span>
+      {% csrf_token %}<input type="range" name="progress" min="0" max="100" step="5" value="{{ g.progress }}" class="range" aria-label="Progress"><button class="btn btn-soft">Update</button></form>
+    <div class="row"><a class="icon-btn" href="{% url 'goals_edit' g.pk %}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+      <form method="post" action="{% url 'goals_delete' g.pk %}" data-confirm="Delete this goal?">{% csrf_token %}<button class="icon-btn danger" title="Delete"><i class="fa-regular fa-trash-can"></i></button></form></div>
+  </article>
+{% empty %}<div class="span-all">{% include "_empty.html" with icon="🎯" text="No active goals. What would you like to grow?" url="goals_add" btn="Create a goal" %}</div>{% endfor %}
+</div>
+{% if completed %}<h3>Completed 🎉</h3>
+<div class="grid">{% for g in completed %}
+  <article class="card done-card"><h4>✅ {{ g.title }}</h4><div class="progress"><span data-progress="100"></span></div>
+    <div class="row"><a class="icon-btn" href="{% url 'goals_edit' g.pk %}"><i class="fa-solid fa-pen"></i></a>
+    <form method="post" action="{% url 'goals_delete' g.pk %}" data-confirm="Delete this goal?">{% csrf_token %}<button class="icon-btn danger"><i class="fa-regular fa-trash-can"></i></button></form></div></article>
+{% endfor %}</div>{% endif %}
+{% endblock %}
