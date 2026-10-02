@@ -1,71 +1,186 @@
-# Dream Space ✨
+# 🌙 Dream Space
 
-A private, dreamy personal wellness space: mood tracker, journal, mood-based music, calendar, routine planner,
-reminders, wellness (water, sleep, daily activities), goals and private notes.
-Django + Django Templates + MySQL. Every record belongs to a user and every query is filtered by the logged-in user.
+Dream Space is a personal wellness and self-care web application designed to provide users with a calm and private digital space to manage their moods, journals, routines, tasks, wellness habits, music, calendar, and personal notes.
 
-## 1. Requirements
-- Python 3.10+
-- MySQL 8.0+ (or MariaDB 10.5+)
+## ✨ Features
 
-## 2. Python environment
+* 🔐 User Login & Signup
+* 😊 Mood Tracker
+* 📖 Private Journal
+* 🎵 Mood-Based Music
+* 📅 Calendar
+* ⏰ Daily Routine & Timetable
+* ✅ Task Management
+* 💧 Water & Wellness Tracking
+* 😴 Sleep Tracking
+* 🎯 Personal Goals
+* 📝 Private Notes
+* ⚙️ User Settings
+* 📱 Responsive Design
+
+## 🎨 Design
+
+Dream Space uses a calm and dreamy design with:
+
+* Soft colors
+* Clean interface
+* Rounded cards
+* Smooth animations
+* Dreamy backgrounds
+* Leaves and bubble elements
+* Responsive layouts
+
+The goal is to make the application feel like a personal digital space rather than a traditional productivity dashboard.
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+
+### Backend
+
+* Python
+* Django
+
+### Database
+
+* MySQL
+
+## 📂 Main Modules
+
+### 😊 Mood Tracker
+
+Users can record their daily mood, select an emoji, add a reason, and view their mood history.
+
+### 📖 Journal
+
+Users can write and manage private journal entries and record their thoughts and feelings.
+
+### 🎵 Music
+
+Provides mood-based music recommendations to create a relaxing experience.
+
+### 📅 Calendar
+
+Helps users organize their activities, routines, and important dates.
+
+### ⏰ Routine & Tasks
+
+Users can create routines, add tasks, set reminders, and track completed activities.
+
+### 💧 Wellness
+
+Users can track daily habits such as water intake, sleep, and personal goals.
+
+### 📝 Private Notes
+
+Users can save important personal notes in their private space.
+
+## 🔒 Privacy
+
+Dream Space is designed to keep personal information private.
+
+User-specific data such as:
+
+* Journal entries
+* Mood records
+* Personal notes
+* Routines
+* Tasks
+* Wellness information
+
+should only be accessible to the authenticated user.
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+
 ```bash
-cd dream_space
+git clone https://github.com/your-username/dream-space.git
+cd dream-space
+```
+
+### 2. Create Virtual Environment
+
+```bash
 python -m venv venv
-# Windows:  venv\Scripts\activate
-# macOS/Linux:  source venv/bin/activate
+```
+
+Activate it on Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
-Packages: `Django`, `PyMySQL` (pure-Python MySQL driver, no compiler needed) and `cryptography` (MySQL 8 auth).
-If you prefer `mysqlclient`, install it instead and it is used automatically.
 
-## 3. Create the MySQL database
+### 4. Create MySQL Database
+
 ```sql
-CREATE DATABASE dream_space CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- optional dedicated user:
-CREATE USER 'dream'@'localhost' IDENTIFIED BY 'a-strong-password';
-GRANT ALL PRIVILEGES ON dream_space.* TO 'dream'@'localhost';
-FLUSH PRIVILEGES;
+CREATE DATABASE dream_space;
 ```
-(`utf8mb4` is required so emojis are stored correctly.)
 
-## 4. Configure
-Copy `.env.example` to `.env` and fill in your values (never commit `.env`):
-```
-DB_NAME=dream_space
-DB_USER=dream
-DB_PASSWORD=a-strong-password
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DJANGO_SECRET_KEY=<long random string>
-```
-These are read in `dream_space/settings.py`. Set `TIME_ZONE` there too (e.g. `Asia/Kolkata`) so "today" matches your day.
+Configure your MySQL database in Django's `settings.py`.
 
-## 5. Migrate and run
+### 5. Run Migrations
+
 ```bash
+python manage.py makemigrations
 python manage.py migrate
+```
+
+### 6. Create Admin User
+
+```bash
+python manage.py createsuperuser
+```
+
+### 7. Run the Project
+
+```bash
 python manage.py runserver
 ```
-Open http://127.0.0.1:8000 → sign up → your dashboard.
-Optional: `python manage.py createsuperuser` for the `/admin/` site.
 
-## Password reset
-By default, reset emails are printed in the terminal running the server (copy the link into your browser).
-For real email set `EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend` and the `EMAIL_*` values in `.env`.
+Open:
 
-## Tests
-`python manage.py test` (set `DB_ENGINE=sqlite` to run without MySQL). They cover login, signup, CRUD flows,
-settings, account deletion and that one user can never read or change another user's data.
-
-## Notes
-- Music: no audio is stored. Songs link out to YouTube/Spotify searches.
-- Browser reminder notifications: enable in Settings → Preferences, allow notifications, keep a Dream Space tab open.
-- Production: set `DJANGO_DEBUG=False`, a real `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, serve over HTTPS and run `collectstatic`.
-
-## Structure
+```text
+http://127.0.0.1:8000/
 ```
-dream_space/  settings.py urls.py wsgi.py asgi.py
-core/         models.py views.py forms.py urls.py admin.py backends.py context.py music_data.py tests.py migrations/
-templates/    base.html + one template per page
-static/       css/style.css  js/app.js  images/
-```
+
+## 🔮 Future Enhancements
+
+* 🤖 AI-powered mood insights
+* 🎵 Personalized music recommendations
+* 🔔 Smart reminders
+* 📊 Mood analytics
+* 🌙 Dark mode
+* ☁️ Cloud deployment
+* 📱 Progressive Web App
+* 🔐 Advanced privacy controls
+
+## 🎯 Project Objective
+
+The main objective of Dream Space is to combine personal wellness and everyday organization into one peaceful digital platform.
+
+It provides users with a private space to understand their emotions, maintain healthy routines, write their thoughts, manage tasks, and take care of their overall well-being.
+
+## 👩‍💻 Developer
+
+Ojaswani
+
+B.Tech Computer Science & Engineering
+
+## 📌 Project Status
+
+🚧 **Under Development**
+
+## 💭 Vision
+
+> **Dream Space — A little space for your thoughts, feelings, routines and dreams. 🌙**
